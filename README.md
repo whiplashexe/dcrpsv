@@ -94,9 +94,6 @@ off and the presence is removed.
 | `--interval` |                  | `5s`         | how often to ask the console             |
 | `--image`    |                  | `ps5`        | fallback art asset name                  |
 | `--covers`   |                  | `covers.json`| your own title ID -> cover map           |
-| `--igdb-client-id`     | `IGDB_CLIENT_ID`     | (off) | enables automatic covers        |
-| `--igdb-client-secret` | `IGDB_CLIENT_SECRET` | (off) | enables automatic covers        |
-| `--cache`    |                  | `covers.cache.json` | remembers looked-up covers  |
 
 ## Game covers
 
@@ -112,27 +109,6 @@ The key is the title ID (the companion prints it every time the game changes).
 The value is a public `https` URL to a square image (1024x1024 is ideal), or
 the name of an art asset you uploaded in the Developer Portal. Your file
 overrides the catalog. Want everyone to benefit? See [CONTRIBUTING](CONTRIBUTING.md).
-
-### Automatic covers (optional)
-
-For games that are in neither your `covers.json` nor the catalog, the companion
-can look the cover up on [IGDB](https://www.igdb.com/) by game name:
-
-1. Create a free Twitch application at <https://dev.twitch.tv/console/apps>
-   (any redirect URL, e.g. `http://localhost`) and copy its **Client ID** and a
-   generated **Client Secret**. See the [IGDB guide](https://api-docs.igdb.com/#account-creation).
-2. Run the companion with both values:
-   ```bash
-   ./ps5-discord-rpc --host <PS5_IP> --app-id <ID> \
-     --igdb-client-id <TWITCH_ID> --igdb-client-secret <TWITCH_SECRET>
-   ```
-   (or set `IGDB_CLIENT_ID` / `IGDB_CLIENT_SECRET`).
-
-Lookup order: `covers.json` -> catalog -> local cache -> IGDB. Found covers are
-saved in `covers.cache.json` so IGDB is asked once per game. Only an **exact**
-name match is accepted; otherwise the fallback image is used and the log tells
-you to add the game to `covers.json`. Keep the secret private: never commit it
-or paste it in issues.
 
 ## Troubleshooting
 
@@ -172,7 +148,7 @@ checkout. Tests: `go test ./...`.
 
 - The payload listens on your local network with **no authentication** and only
   reveals the current game's title ID and name. Do not expose port 9045 to the internet.
-- Without IGDB the companion sends nothing anywhere except to your local Discord app. With IGDB enabled it sends only the game name to IGDB (and your Twitch credentials to Twitch). Cover
+- The companion sends nothing anywhere except to your local Discord app. Cover
   images are fetched by Discord itself from the URLs you configure.
 
 ## Disclaimer
