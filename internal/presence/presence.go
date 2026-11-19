@@ -7,7 +7,6 @@ import (
 
 	"github.com/hugolgst/rich-go/client"
 
-	"github.com/whiplashexe/dcrpsv/internal/covers"
 	"github.com/whiplashexe/dcrpsv/internal/ps5"
 )
 
@@ -16,8 +15,8 @@ type Options struct {
 	AppID       string // Discord application (client) ID
 	LargeImage  string // asset key uploaded in the Discord developer portal
 	LargeText   string
-	Covers      covers.Map // optional title ID -> image
-	MaxFailures int        // consecutive poll failures before presence is cleared
+	Cover       func(titleID, name string) string // optional per-game image
+	MaxFailures int                               // consecutive poll failures before presence is cleared
 }
 
 // Manager keeps Discord in sync with the console.
@@ -65,10 +64,14 @@ func (m *Manager) Update(st ps5.Status, err error) {
 	if name == "" {
 		name = st.TitleID
 	}
+	image := m.opt.LargeImage
+	if m.opt.Cover != nil {
+		image = m.opt.Cover(st.TitleID, st.TitleName)
+	}
 	act := client.Activity{
 		Details:    name,
 		State:      "Playing on PS5",
-		LargeImage: m.opt.Covers.Lookup(st.TitleID, m.opt.LargeImage),
+		LargeImage: image,
 		LargeText:  m.opt.LargeText,
 		Timestamps: &client.Timestamps{Start: &m.startedAt},
 	}

@@ -20,6 +20,9 @@ func main() {
 	appID := flag.String("app-id", env("DISCORD_APP_ID", ""), "Discord application ID (or DISCORD_APP_ID)")
 	image := flag.String("image", "ps5", "Discord large image asset key")
 	coversPath := flag.String("covers", "covers.json", "title ID -> cover image map (optional)")
+	cachePath := flag.String("cache", "covers.cache.json", "where looked-up covers are remembered")
+	igdbID := flag.String("igdb-client-id", env("IGDB_CLIENT_ID", ""), "Twitch client ID for automatic covers (or IGDB_CLIENT_ID)")
+	igdbSecret := flag.String("igdb-client-secret", env("IGDB_CLIENT_SECRET", ""), "Twitch client secret (or IGDB_CLIENT_SECRET)")
 	interval := flag.Duration("interval", 5*time.Second, "poll interval")
 	flag.Parse()
 
@@ -36,11 +39,19 @@ func main() {
 	if err != nil {
 		log.Fatalf("covers: %v", err)
 	}
-	cv := covers.Merge(catalog, mine) // your covers.json wins over the catalog
+	resolver := &covers.Resolver{
+		Static:    covers.Merge(catalog, mine), // your covers.json wins over the catalog
+		Fallback:  *image,
+		CachePath: *cachePath,
+	}
+	if *igdbID != "" && *igdbSecret != "" {
+		resolver.IGDB = covers.NewIGDB(*igdbID, *igdbSecret)
+		log.Print("automatic covers: IGDB enabled")
+	}
 	log.Printf("covers: %d from catalog, %d from %s", len(catalog), len(mine), *coversPath)
 
 	c := ps5.New(*host, *port)
-	m := presence.New(presence.Options{AppID: *appID, LargeImage: *image, LargeText: "PlayStation 5", Covers: cv})
+	m := presence.New(presence.Options{AppID: *appID, LargeImage: *image, LargeText: "PlayStation 5", Cover: resolver.Cover})
 	defer m.Close()
 
 	sig := make(chan os.Signal, 1)
