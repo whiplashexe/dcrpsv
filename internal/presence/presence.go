@@ -7,8 +7,8 @@ import (
 
 	"github.com/hugolgst/rich-go/client"
 
-	"github.com/your-name/ps5-discord-rpc/internal/covers"
-	"github.com/your-name/ps5-discord-rpc/internal/ps5"
+	"github.com/whiplashexe/dcrpsv/internal/covers"
+	"github.com/whiplashexe/dcrpsv/internal/ps5"
 )
 
 // Options configure the presence.

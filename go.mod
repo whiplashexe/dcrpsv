@@ -1,4 +1,4 @@
-module github.com/your-name/ps5-discord-rpc
+module github.com/whiplashexe/dcrpsv
 
 go 1.22
 

@@ -9,9 +9,9 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/your-name/ps5-discord-rpc/internal/covers"
-	"github.com/your-name/ps5-discord-rpc/internal/presence"
-	"github.com/your-name/ps5-discord-rpc/internal/ps5"
+	"github.com/whiplashexe/dcrpsv/internal/covers"
+	"github.com/whiplashexe/dcrpsv/internal/presence"
+	"github.com/whiplashexe/dcrpsv/internal/ps5"
 )
 
 func main() {
